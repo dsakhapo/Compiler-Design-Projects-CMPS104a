@@ -16,7 +16,7 @@ const string* intern_stringset (const char* string) {
    return &*handle.first;
 }
 
-void dump_stringset (ostream& out, ofstream& str_file) {
+void dump_stringset (ostream& out) {
    size_t max_bucket_size = 0;
    for (size_t bucket = 0; bucket < set.bucket_count(); ++bucket) {
       bool need_index = true;
@@ -31,9 +31,6 @@ void dump_stringset (ostream& out, ofstream& str_file) {
          const string* str = &*itor;
          out << setw(20) << set.hash_function()(*str) << ": "
              << str << "->\"" << *str << "\"" << endl;
-
-         //Add each token from the stringset into the .str file
-         str_file << *str << endl;
       }
    }
    out << "load_factor = " << fixed << setprecision(3)

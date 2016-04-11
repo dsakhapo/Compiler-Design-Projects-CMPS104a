@@ -115,7 +115,7 @@ int main (int argc, char** argv) {
       if (pclose_rc != 0) set_exitstatus (EXIT_FAILURE);
    }
   //Dump stringset into .str file
-   dump_stringset (cout, str_file);
+   dump_stringset (str_file);
    str_file.close();
    return EXIT_SUCCESS;
 }

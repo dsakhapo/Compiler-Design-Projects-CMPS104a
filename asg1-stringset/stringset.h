@@ -8,7 +8,7 @@
 
 const std::string* intern_stringset (const char*);
 
-void dump_stringset (std::ostream&, std::ofstream&);
+void dump_stringset (std::ostream&);
 
 #endif
 
