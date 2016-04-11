@@ -1,0 +1,21 @@
+Name: Darius Sakhapour
+username: dsakhapo
+
+======
+NOTES:
+======
+-For the .str output file, I dumped only the tokens from the hashtable,
+I did not include any of the hash information that he outputted by default.
+I hope this was ok as I didn't see any need for the extra hash info nor did I see
+any explicit instructions to include it.
+
+-I noticed in the SCORE.asg1 file, that there were the following criteria under 
+PROGRAM TESTING,
+
+(3) unordered_set properly printed out as per asg1 spec.
+
+(3) nothing printed to stdout.
+
+so I have all the hashing info that's not included in the .str file, display when the program is run,
+but nothing else. I hope this is ok as I wasn't sure whether to get rid of all output completely as 
+these categories seem contradictory. Thanks for your time.
