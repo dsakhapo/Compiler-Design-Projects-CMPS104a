@@ -10,11 +10,39 @@ using namespace std;
 #include "stringset.h"
 #include "string.h"
 #include <unistd.h>
+#include "lyutils.h"
 
 const string CPP = "/usr/bin/cpp";
 string cpp_opts = "";
 constexpr size_t LINESIZE = 1024;
 ofstream str_file; //Create a new file that'll have the .str suffix
+
+// Open a pipe from the C preprocessor.
+// Exit failure if can't.
+// Assigns opened pipe to FILE* yyin.
+void cpp_popen (const char* filename) {
+   string cpp_command = CPP + " " + filename;
+
+   //Take care of .tok suffix
+   string tok_name = filename;
+   size_t found = tok_name.find_first_of(".");
+   tok_name = tok_name.substr(0, found);
+   tok_name += ".tok";
+   tok_file = fopen(tok_name.c_str(), "w");
+
+   yyin = popen (cpp_command.c_str(), "r");
+   if (yyin == NULL) {
+      syserrprintf (cpp_command.c_str());
+      exit (EXIT_SUCCESS);
+    //yy_flex_debug messages
+   }else {
+      if (yy_flex_debug) {
+         fprintf (stderr, "-- popen (%s), fileno(yyin) = %d\n",
+                  cpp_command.c_str(), fileno (yyin));
+      }
+      scanner_newfilename (cpp_command.c_str());
+   }
+}
 
 // Chomp the last character from a buffer if it is delim.
 void chomp (char* string, char delim) {
@@ -71,8 +99,8 @@ void user_opts(int argc, char** argv){
    while((opt = getopt(argc, argv, "@:D:ly")) != -1){
       switch(opt){
       case '@'  : set_debugflags(optarg);               break;
-      case 'l'  :                                       break;
-      case 'y'  :                                       break;
+      case 'l'  : yy_flex_debug = 1;                    break;
+      case 'y'  : yydebug = 1;                          break;
       case 'D'  : cpp_opts = "-D" + string(optarg);     break;
       default   : cerr << "Error: user_opts()" << endl; break;
       }
@@ -102,7 +130,6 @@ int main (int argc, char** argv) {
    //Command to be executed by the shell as a subprocess,
    //the C preprocessor is used to filter a .oc file
    string command = CPP + " " + cpp_opts + " " + filename;
-   /*cout << "command = " << "\"" << command << "\""<< endl;*/
 
    /*** C PREPROCESSOR OPERATIONS ***/
    FILE* pipe = popen (command.c_str(), "r");
@@ -117,5 +144,17 @@ int main (int argc, char** argv) {
   //Dump stringset into .str file
    dump_stringset (str_file);
    str_file.close();
+
+   /***** .TOK FILE OPERATIONS *****/
+   cpp_popen(filename);
+   for(;;){
+      int yy_val = yylex();
+      if(yy_val == YYEOF) break;
+   }
+   fclose(tok_file);
+
+   //Close the pipe and indicate failure if failed to close.
+   int pclose_rc = pclose (yyin);
+   if (pclose_rc != 0) exit(EXIT_FAILURE);
    return EXIT_SUCCESS;
 }

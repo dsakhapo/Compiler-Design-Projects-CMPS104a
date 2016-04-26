@@ -16,7 +16,6 @@
 %option nodefault
 %option nounput
 %option noyywrap
-%option verbose
 %option warn
 
 
@@ -78,6 +77,9 @@ ord				{ return yylval_token(TOK_ORD);     }
 chr				{ return yylval_token(TOK_CHR);     }
 new				{ return yylval_token(TOK_NEW);     }
 
+{INTCON}		{ return yylval_token(TOK_INTCON);    }
+{CHARCON} 		{ return yylval_token(TOK_CHARCON);   }
+{STRINGCON}		{ return yylval_token(TOK_STRINGCON); }
 {INVAL_IDENT}	{ scanner_badtoken(yytext); }
 .				{ scanner_badchar(*yytext); }
 

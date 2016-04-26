@@ -12,6 +12,10 @@ using namespace std;
 #include "lyutils.h"
 #include "auxlib.h"
 
+//This is done to suppress linker errors w/ makefile,
+//so it is initialized here first and then in main.cpp
+FILE* tok_file = nullptr;
+
 astree* yyparse_astree = NULL;
 int scan_linenr = 1;
 int scan_offset = 0;
@@ -70,7 +74,9 @@ int yylval_token (int symbol) {
                         scan_linenr, offset, yytext);
 
    //Print function that prints to .tok file
-
+   fprintf (tok_file,"%-5d   %-5d   %-5d   %-5s   %-10s   \n",
+            scan_linenr, offset,
+            symbol, get_yytname(symbol), yytext);
    return symbol;
 }
 
@@ -89,7 +95,7 @@ void scanner_include (void) {
       errprintf ("%: %d: [%s]: invalid directive, ignored\n",
                  scan_rc, yytext);
    }else {
-      printf (";# %d \"%s\"\n", linenr, filename);
+      fprintf (tok_file,"# %d \"%s\"\n", linenr, filename);
       scanner_newfilename (filename);
       scan_linenr = linenr - 1;
       DEBUGF ('m', "filename=%s, scan_linenr=%d\n",
