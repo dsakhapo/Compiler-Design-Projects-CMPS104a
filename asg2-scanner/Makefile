@@ -52,7 +52,6 @@ ${PARSECPP} ${PARSEHDR} : ${BISONSRC}
 	${BISON} ${BISONSRC}
 	echo -e '1,$$!cpp -fpreprocessed -dD\nw\nq\n' | ex ${PARSEHDR}
 
-
 ci : ${ALLSRC} ${TESTINS}
 	- checksource ${ALLSRC}
 	- cpplint.py.perl ${CPPSRC}

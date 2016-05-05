@@ -12,10 +12,7 @@ using namespace std;
 #include "lyutils.h"
 #include "auxlib.h"
 
-//This is done to suppress linker errors w/ makefile,
-//so it is initialized here first and then in main.cpp
 FILE* tok_file = nullptr;
-
 astree* yyparse_astree = NULL;
 int scan_linenr = 1;
 int scan_offset = 0;
@@ -68,14 +65,15 @@ void scanner_badtoken (char* lexeme) {
               scan_linenr, lexeme);
 }
 
+//included_filesnames.size() - 1 might be wrong
 int yylval_token (int symbol) {
    int offset = scan_offset - yyleng;
    yylval = new astree (symbol, included_filenames.size() - 1,
                         scan_linenr, offset, yytext);
 
    //Print function that prints to .tok file
-   fprintf (tok_file,"%-5d   %-5d   %-5d   %-5s   %-10s   \n",
-            scan_linenr, offset,
+   fprintf (tok_file,"%-5d   %-d.%.3d   %-5d   %-5s   %-10s   \n",
+            included_filenames.size() - 1, scan_linenr, offset,
             symbol, get_yytname(symbol), yytext);
    return symbol;
 }

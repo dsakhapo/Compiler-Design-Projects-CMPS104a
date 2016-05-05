@@ -13,17 +13,13 @@
 //Used in main.cpp/lyutils.cpp
 extern FILE* tok_file;
 
-//This is done to suppress makefile errors on the linux servers
-typedef size_t yy_leng_t;
-
 extern FILE* yyin;
 extern astree* yyparse_astree;
 extern int yyin_linenr;
 extern char* yytext;
 extern int yy_flex_debug;
 extern int yydebug;
-
-extern yy_leng_t yyleng;
+extern int yyleng;
 
 int yylex (void);
 int yyparse (void);
